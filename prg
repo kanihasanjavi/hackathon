@@ -14,10 +14,10 @@ const reset = () => {
 setCount(0);
 };
 return (
-<div style={{ textAlign: &quot;center&quot;, marginTop: &quot;50px&quot; }}>;
+<div style={{ textAlign: "center", marginTop: "50px" }}>;
 <h1>React Counter App</h1>
 <h2>{count}</h2>;
-<button onClick={increment} style={{ margin: &quot;10px&quot; }}>
+<button onClick={increment} style={{ margin: "10px" }}>
 Increment
 </button>
 <button onClick={decrement} style={{ margin: "10px" }}>;
