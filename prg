@@ -1,153 +1,136 @@
-PRG1
+PRG1--- INTRO TO NODE.JS
 
-File: Src/App.jsx
-import { useState } from 'react';
-function App() {
-const [count, setCount] = useState(0);
-const increment = () => {
-setCount(count + 1);
-};
-const decrement = () =>{
-setCount(count - 1);
-};
-const reset = () => {
-setCount(0);
-};
-return (
-<div style={{ textAlign: "center", marginTop: "50px" }}>;
-<h1>React Counter App</h1>
-<h2>{count}</h2>;
-<button onClick={increment} style={{ margin: "10px" }}>
-Increment
-</button>
-<button onClick={decrement} style={{ margin: "10px" }}>;
+const http = require('http');
+// Creating server
+const server = http.createServer((req, res) => {
+// Setting response header
 
-Decrement
-</button>
-<button onClick={reset} style={{ margin: "10px" }}>;
-Reset
-</button>
-</div>;
-);
+res.writeHead(200, {'Content-Type':'text/plain'});
+// Handling different routes
+if(req.url === '/'){
+res.write("Welcome to Node.js Server");
 }
-export default App;
-
-
-PRG2
-
-File: Src/App.jsx
-import { useState } from'react';
-
-function App() {
-const [tasks, setTasks] = useState([]);
-const [text, setText] = useState("");
-
-const addTask = () =&gt; {
-if (text === "") return;
-
-setTasks([...tasks, { name: text, completed: false }]);
-setText("");
-};
-
-const deleteTask = (index) => {
-setTasks(tasks.filter((_, i) => i !== index));
-};
-
-const toggleTask = (index) => {
-setTasks(
-tasks.map((task, i) =>
-i === index ? { ...task, completed: !task.completed } : task
-)
-
-);
-};
-
-return (
-<div>;
-<h1>To Do List</h1>
-
-<input
-value={text}
-onChange={(e) => setText(e.target.value)}
-placeholder="Enter task"
-/>
-<button onClick={addTask}>;Add</button>;
-
-<ul>
-{tasks.map((task, index) => (
-<li key={index}>;
-<input
-type="checkbox"
-checked={task.completed}
-onChange={() => toggleTask(index)}
-/>
-
-<span className={task.completed ? "done": &quot;&quot;}>
-{task.name}
-</span>
-
-<button onClick={() =&gt; deleteTask(index)}>Delete</button>
-</li>
-))}
-</ul>
-</div>
-);
+else if(req.url === '/about'){
+res.write("This is About Page");
 }
-export default App;
-
-
-
-PRG3
-
-
-import React ,{useState}from 'react'
-
-function App() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [submitData, setSubmitData] = useState(null)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formdata = { name, email, password };
-    setSubmitData(formdata);
-    setName("");
-    setEmail("");
-    setPassword("");
-
-  }
-  return (
-    <div>
-      <h2>forms</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Name:</label>
-        <input type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required />
-        <label>Email:</label>
-        <input type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required />
-        <label>Password:</label>
-        <input type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required />
-        <button type="submit">Submit</button>
-
-        {submitData && (
-          <div>
-            <h3>Submitted Data:</h3>
-            <p><strong>Name</strong> {submitData.name}</p>
-            <p><strong>Email</strong> {submitData.email}</p>
-            <p><strong>Password</strong> {submitData.password}</p>
-          </div>)}
-
-      </form>
-    </div>
-  )
+else{
+res.write("Page Not Found");
 }
+// Ending response
+res.end();
+});
+// Listening on port
+server.listen(3000, () => {
+console.log("Server running at http://localhost:3000");
+});
 
-export default App
+
+PRG2----- EXPRESS AND ROUTING
+
+const express = require('express');
+const app = express();
+// Home Route
+app.get('/', (req, res) => {
+res.send("Welcome to Express Home Page");
+});
+// About Route
+app.get('/about', (req, res) => {
+res.send("About Page - Express Framework");
+});
+// Contact Route
+app.get('/contact', (req, res) => {
+res.send("Contact Page");
+});
+// Handling unknown routes
+app.use((req, res) => {
+res.status(404).send("Page Not Found");
+});
+// Starting server
+app.listen(3000, () => {
+console.log("Express server running on port 3000");
+});
+
+
+PRG3 ---MIDDLEWARE IN EXPRESS
+
+const express = require('express');
+const app = express();
+// Custom Middleware
+app.use((req, res, next) => {
+console.log("Request Method:", req.method);
+console.log("Request URL:", req.url);
+next();
+});
+// Route
+
+app.get('/', (req, res) => {
+res.send("Middleware Example");
+});
+app.listen(3000, () => {
+console.log("Server running...");
+});
+
+
+PRG4 ---- REST API USING EXPRESS 
+
+const express = require('express');
+const app = express();
+app.use(express.json());
+// In-memory data
+let students = [
+{id:1, name:"John"},
+{id:2, name:"Sam"}
+];
+// GET all
+app.get('/students', (req,res)=>{
+res.json(students);
+});
+// POST
+app.post('/students', (req,res)=>{
+const newStudent = req.body;
+students.push(newStudent);
+res.json(newStudent);
+});
+// PUT
+app.put('/students/:id', (req,res)=>{
+const id = parseInt(req.params.id);
+students = students.map(s => s.id === id ? req.body : s);
+res.json({message:"Updated"});
+});
+// DELETE
+app.delete('/students/:id', (req,res)=>{
+const id = parseInt(req.params.id);
+students = students.filter(s => s.id !== id);
+res.json({message:"Deleted"});
+});
+app.listen(3000, ()=>console.log("Server running"));
+
+
+PRG5----- MONGODB CONNECTION USING MONGOOSE
+
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://127.0.0.1:27017/studentDB')
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log("Connection Error:", err));
+
+PRG6---- SCHEMA AND MODEL
+
+const mongoose = require('mongoose');
+const studentSchema = new mongoose.Schema({
+name: {
+type: String,
+required: true
+},
+age: {
+type: Number,
+min: 18
+},
+department: String,
+email: {
+type: String,
+unique: true
+}
+});
+const Student = mongoose.model("Student", studentSchema);
+console.log("Student Model Created");
+module.exports = Student;
