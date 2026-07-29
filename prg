@@ -1,136 +1,105 @@
-PRG1--- INTRO TO NODE.JS
+ PRG1--- COMMANDS rm,cp,mv,cmp,wc,split,diff
 
-const http = require('http');
-// Creating server
-const server = http.createServer((req, res) => {
-// Setting response header
+echo “ ls command”
+ls
+echo "Copying content from file1.txt to file3.txt"
+cp file1.txt file3.txt
+echo "Displaying contents in file3.txt"
+cat file3.txt
+echo "Moving contents from file2.txt to file4.txt"
+mv file2.txt file4.txt
+echo "Displaying content in file4.txt"
+cat file4.txt
+echo "Display count of the lines, words, character in the file file4.txt"
+wc file4.txt
+echo "Display the number of lines in file4.txt"
+wc -l file4.txt
+echo "Display the number of words in file4.txt"
+wc -w file4.txt
+echo "Display the number of character in file4.txt"
+wc -c file4.txt
+echo "Splitting the file4.txt by 3 lines in each"
+split -3 file4.txt
+echo "Listing the files"
+ls
+echo "Comparing the files file1.txt file4.txt"
+cmp file1.txt file4.txt
+echo "Using diff command between file1.txt file4.txt"
+diff file1.txt file4.txt
 
-res.writeHead(200, {'Content-Type':'text/plain'});
-// Handling different routes
-if(req.url === '/'){
-res.write("Welcome to Node.js Server");
-}
-else if(req.url === '/about'){
-res.write("This is About Page");
-}
-else{
-res.write("Page Not Found");
-}
-// Ending response
-res.end();
-});
-// Listening on port
-server.listen(3000, () => {
-console.log("Server running at http://localhost:3000");
-});
+PRG2-----user and system configuration
 
-
-PRG2----- EXPRESS AND ROUTING
-
-const express = require('express');
-const app = express();
-// Home Route
-app.get('/', (req, res) => {
-res.send("Welcome to Express Home Page");
-});
-// About Route
-app.get('/about', (req, res) => {
-res.send("About Page - Express Framework");
-});
-// Contact Route
-app.get('/contact', (req, res) => {
-res.send("Contact Page");
-});
-// Handling unknown routes
-app.use((req, res) => {
-res.status(404).send("Page Not Found");
-});
-// Starting server
-app.listen(3000, () => {
-console.log("Express server running on port 3000");
-});
+echo -e "username : " $ USER
+echo -e "loginname : " $ LOGNAME
+echo -e "currentshell : " $ SHELL
+echo -e "homedirectory : " $ HOME
+echo -e "our pc os is : " $OSTYPE
+echo -e "current directory : " $pwd
+echo -e "system config : " $(lscpu)
+echo -e "free memory space : "
+free -m
 
 
-PRG3 ---MIDDLEWARE IN EXPRESS
+PRG3 ---IMPLEMENTATION OF PIPES,REDIRECTION
 
-const express = require('express');
-const app = express();
-// Custom Middleware
-app.use((req, res, next) => {
-console.log("Request Method:", req.method);
-console.log("Request URL:", req.url);
-next();
-});
-// Route
-
-app.get('/', (req, res) => {
-res.send("Middleware Example");
-});
-app.listen(3000, () => {
-console.log("Server running...");
-});
+echo “Pipe symbol connect one or more process”
+ls -1 *.sh | wc –l
+echo “Redirect the output”
+echo “------------------------“
+echo “Redirect the output to the new file”
+sh lab2.sh > correctoutput
+echo “Redirect error output to the new file”
+sh lab2.sh > erroroutput
+echo “Redirect all output to the new file”
+sh lab2.sh &> alloutputs
+echo “-------------------------“
+echo “tee copies data from standard input to each file and also to standard output”
+ls -1 *.txt | wc –l | tee count.txt
 
 
-PRG4 ---- REST API USING EXPRESS 
 
-const express = require('express');
-const app = express();
-app.use(express.json());
-// In-memory data
-let students = [
-{id:1, name:"John"},
-{id:2, name:"Sam"}
-];
-// GET all
-app.get('/students', (req,res)=>{
-res.json(students);
-});
-// POST
-app.post('/students', (req,res)=>{
-const newStudent = req.body;
-students.push(newStudent);
-res.json(newStudent);
-});
-// PUT
-app.put('/students/:id', (req,res)=>{
-const id = parseInt(req.params.id);
-students = students.map(s => s.id === id ? req.body : s);
-res.json({message:"Updated"});
-});
-// DELETE
-app.delete('/students/:id', (req,res)=>{
-const id = parseInt(req.params.id);
-students = students.filter(s => s.id !== id);
-res.json({message:"Deleted"});
-});
-app.listen(3000, ()=>console.log("Server running"));
+PRG4 ---- DISPLAY THE DATES,USERNAME,LS THE FILES
 
+echo "1.Current date:"
+echo "2.Your user name:"
+echo "3.List files and directories"
+read option
+case ${option} in
+1)
+echo "Current date is :" $(date);;
+2)
+echo "Your user name is: "$(whoami);;
+3)
+echo "To list out all files and directories:"$(ls);;
+*)
+echo "Invalid Option"
+esac
 
-PRG5----- MONGODB CONNECTION USING MONGOOSE
+PRG5----- FILTER COMMANDS
 
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/studentDB')
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log("Connection Error:", err));
+echo "Filter commands"
+cp /etc/passwd passwd
+echo "Display the lines containing the word root"
+grep -n "root" passwd | more
+echo "Display the count of lines that is containing the word root"
+grep -c "root" passwd
+echo "Display the count of lines that dont match with the line root"
+grep -v "root" passwd | more
+echo "Display the no. of lines, character and words in passwd file"
 
-PRG6---- SCHEMA AND MODEL
+wc passwd
+echo "Replace ":" with "*" in the passwd file"
+tr ":" '*' < passwd | more
+echo "Display first column of the passwd file"
+cut -d ':' -f1 passwd
 
-const mongoose = require('mongoose');
-const studentSchema = new mongoose.Schema({
-name: {
-type: String,
-required: true
-},
-age: {
-type: Number,
-min: 18
-},
-department: String,
-email: {
-type: String,
-unique: true
-}
-});
-const Student = mongoose.model("Student", studentSchema);
-console.log("Student Model Created");
-module.exports = Student;
+PRG6---- DELETE THE FILE WHICH HAS SIZE 0
+
+clear
+echo "Enter the file name"
+read fname
+if[-e $fname]
+then
+echo $ fname "file has size>0"
+else
+rm $fname
