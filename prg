@@ -1,307 +1,611 @@
- PRG1--- COMMANDS rm,cp,mv,cmp,wc,split,diff
+PRG1---------
 
-echo “ ls command”
-ls
-echo "Copying content from file1.txt to file3.txt"
-cp file1.txt file3.txt
-echo "Displaying contents in file3.txt"
-cat file3.txt
-echo "Moving contents from file2.txt to file4.txt"
-mv file2.txt file4.txt
-echo "Displaying content in file4.txt"
-cat file4.txt
-echo "Display count of the lines, words, character in the file file4.txt"
-wc file4.txt
-echo "Display the number of lines in file4.txt"
-wc -l file4.txt
-echo "Display the number of words in file4.txt"
-wc -w file4.txt
-echo "Display the number of character in file4.txt"
-wc -c file4.txt
-echo "Splitting the file4.txt by 3 lines in each"
-split -3 file4.txt
-echo "Listing the files"
-ls
-echo "Comparing the files file1.txt file4.txt"
-cmp file1.txt file4.txt
-echo "Using diff command between file1.txt file4.txt"
-diff file1.txt file4.txt
+const http = require("http"); // Creating server
+const server = http.createServer((req, res) => {
+  //Setting response header
+  res.writeHead(200, { "Content-Type": "text/plain" });
 
-PRG2-----user and system configuration
+  // Handling different routes
+  if (req.url === "/") {
+    res.write("Welcome to Node.js Server");
+  } 
+  else if (req.url === "/about") {
+    res.write("This is About Page");
+  } 
+  else {
+    res.write("Page Not Found");
+  }
+  // Ending response
+  res.end();
+});
 
-echo -e "username : " $ USER
-echo -e "loginname : " $ LOGNAME
-echo -e "currentshell : " $ SHELL
-echo -e "homedirectory : " $ HOME
-echo -e "our pc os is : " $OSTYPE
-echo -e "current directory : " $pwd
-echo -e "system config : " $(lscpu)
-echo -e "free memory space : "
-free -m
+// Listening on port
+server.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});
 
+PRG2------------
 
-PRG3 ---IMPLEMENTATION OF PIPES,REDIRECTION
+const express = require('express'); const app = express(); 
+// Home Route 
+app.get('/', (req, res) => { 
+    res.send("Welcome to Express Home Page"); 
+}); 
+// About Route 
+app.get('/about', (req, res) => { 
+    res.send("About Page - Express Framework"); 
+}); 
+// Contact Route 
+app.get('/contact', (req, res) => { 
+    res.send("Contact Page"); 
+}); 
+// Handling unknown routes 
+app.use((req, res) => { 
+    res.status(404).send("Page Not Found"); 
+}); 
+// Starting server 
+app.listen(3000, () => { 
+    console.log("Express server running on port 3000"); 
+}); 
 
-echo “Pipe symbol connect one or more process”
-ls -1 *.sh | wc –l
-echo “Redirect the output”
-echo “------------------------“
-echo “Redirect the output to the new file”
-sh lab2.sh > correctoutput
-echo “Redirect error output to the new file”
-sh lab2.sh > erroroutput
-echo “Redirect all output to the new file”
-sh lab2.sh &> alloutputs
-echo “-------------------------“
-echo “tee copies data from standard input to each file and also to standard output”
-ls -1 *.txt | wc –l | tee count.txt
+PRG3------------
 
+const express = require('express'); 
+const app = express(); 
 
+// Custom Middleware 
+app.use((req, res, next) => { 
+    console.log("Request Method:", req.method); 
+    console.log("Request URL:", req.url); 
+    next(); 
+}); 
 
-PRG4 ---- DISPLAY THE DATES,USERNAME,LS THE FILES
+// Route 
+app.get('/', (req, res) => { 
+    res.send("Middleware Example"); 
+}); 
 
-echo "1.Current date:"
-echo "2.Your user name:"
-echo "3.List files and directories"
-read option
-case ${option} in
-1)
-echo "Current date is :" $(date);;
-2)
-echo "Your user name is: "$(whoami);;
-3)
-echo "To list out all files and directories:"$(ls);;
-*)
-echo "Invalid Option"
-esac
+app.listen(3000, () => { 
+    console.log("Server running..."); 
+}); 
 
-PRG5----- FILTER COMMANDS
+PRG4 --------------
 
-echo "Filter commands"
-cp /etc/passwd passwd
-echo "Display the lines containing the word root"
-grep -n "root" passwd | more
-echo "Display the count of lines that is containing the word root"
-grep -c "root" passwd
-echo "Display the count of lines that dont match with the line root"
-grep -v "root" passwd | more
-echo "Display the no. of lines, character and words in passwd file"
+const express = require('express'); 
+const app = express();  
+app.use(express.json());  
+// In-memory data 
+let students = [     
+    {id:1, name:"John"},     
+    {id:2, name:"Sam"} 
+];  
 
-wc passwd
-echo "Replace ":" with "*" in the passwd file"
-tr ":" '*' < passwd | more
-echo "Display first column of the passwd file"
-cut -d ':' -f1 passwd
+// GET all 
+app.get('/students', (req,res)=>{     
+    res.json(students); 
+});  
 
-PRG6---- DELETE THE FILE WHICH HAS SIZE 0
+// POST 
+app.post('/students', (req,res)=>{     
+    const newStudent = req.body;     
+    students.push(newStudent);     
+    res.json(newStudent); 
+});  
 
-clear
-echo "Enter the file name"
-read fname
-if[-e $fname]
-then
-echo $ fname "file has size>0"
-else
-rm $fname
+// PUT 
+app.put('/students/:id', (req,res)=>{     
+    const id = parseInt(req.params.id);     
+    students = students.map(s => s.id === id ? req.body : s);     
+    res.json({message:"Updated"}); 
+});  
 
+// DELETE 
+app.delete('/students/:id', (req,res)=>{     
+    const id = parseInt(req.params.id);     
+    students = students.filter(s => s.id !== id);     
+    res.json({message:"Deleted"}); 
+});  
 
-PRG7------SUM OF DIGITS
+app.listen(3000, ()=> console.log("Server running"));
 
-echo -n "Enter a number:"
-read n
-sd=0
-sum=0
-while [ $n -gt 0 ]
-do
-sd=$(( $n % 10 ))
-n=$(( $n / 10 ))
-sum=$(( $sum + $sd ))
-done
-echo "Sum of all digits is "$sum
+PRG5------------
 
+const mongoose = require('mongoose'); 
+mongoose.connect('mongodb://127.0.0.1:27017/studentDB') 
+.then(() => console.log("MongoDB Connected")) 
+.catch(err => console.log("Connection Error:", err));
 
-PRG8-----FINDING GREATEST NUMBERS
+PRG6-------------
 
-for((i=0;i<$1;i++))
-do
-echo "Enter $((i+1)) number:"
-read nos[$i]
-done
-echo "Number entered are:"
-for((i=0;i<$1;i++))
-do
-echo ${nos[$i]}
-done
-small=${nos[0]}
-greater=${nos[0]}
-for((i=0;i<$1;i++))
-do
-if [ ${nos[$i]} -lt $small ] then
-small=${nos[$i]}
-elif [ ${nos[$i]} -gt $greater ] then
-greater=${nos[$i]}fi
-done
-echo "Smallest number in an array is $small"
-echo "Greatest number in an array is $greater"
+const mongoose = require('mongoose'); 
 
-PRG9------PALINDRONE CHECKING
+const studentSchema = new mongoose.Schema({ 
+    name: { 
+        type: String, 
+        required: true 
+    }, 
+    age: { 
+        type: Number, min: 18 
+    }, 
+    department: String, 
+    email: { 
+        type: String, 
+        unique: true 
+    } 
+}); 
 
-read -p "Enter a string:" string
-if [[ $(rev <<< "$string") == "$string" ]] then
-echo "Palindrome"
-else
-echo "Not a Palindrome"
-fi
+const Student = mongoose.model("Student", studentSchema); 
+console.log("Student Model Created"); 
+module.exports = Student; 
 
-PRG10------MULTIPLICATION TABLE
+PRG7----------
 
-echo "Enter the table number"
-read n
-echo "Enter the range"
-read range
-echo "Multiplication table for $n upto the range $range"
-for((i=1;i<=range;i++))
-{
-echo " $i X $n = `expr $n \* $i`"
+program6 include
+
+const mongoose = require('mongoose');
+const Student = require('./student');
+
+const main = async () => {
+    try {
+        await mongoose.connect(
+            'mongodb://127.0.0.1:27017/studentDB'
+        );
+
+        console.log("MongoDB Connected");
+
+        const s = new Student({
+            name: "Smith",
+            age: 21,
+            department: "IT",
+            email: "smith@gmail.com"
+        });
+
+        await s.save();
+
+        console.log("Inserted");
+
+        const data = await Student.find();
+
+        console.log(data);
+
+    } catch (err) {
+        console.log("Error:", err);
+    }
+};
+
+main();
+
+PRG8------------
+
+program6 - include
+
+const mongoose = require('mongoose');
+const Student = require('./student');
+
+const main = async () => {
+    try {
+        await mongoose.connect(
+            'mongodb://127.0.0.1:27017/studentDB'
+        );
+
+        console.log("MongoDB Connected");
+
+        // Update
+        const updateResult = await Student.updateOne(
+            { name: "Smith" },
+            { $set: { age: 22 } }
+        );
+
+        console.log("Updated:", updateResult);
+
+        // Delete
+        const deleteResult = await Student.deleteOne(
+            { name: "Jones" }
+        );
+
+        console.log("Deleted:", deleteResult);
+
+    } catch (err) {
+        console.log("Error:", err);
+
+    } finally {
+        await mongoose.disconnect();
+    }
+};
+
+main();
+
+PRG9---------
+
+const mongoose = require("mongoose");
+
+async function main() {
+    await mongoose.connect(
+        "mongodb://127.0.0.1:27017/testdb"
+    );
+
+    console.log("Connected");
+
+    const schema = new mongoose.Schema({
+        name: {
+            type: String,
+            required: true
+        },
+
+        email: {
+            type: String,
+            match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        }
+    });
+
+    const Model = mongoose.model("Test", schema);
+
+    const data = new Model({
+        name: "Smith",
+        email: "sk@gmail.com"
+    });
+
+    try {
+        await data.save();
+        console.log("Saved Successfully");
+    } catch (err) {
+        console.log(err.message);
+    }
+
+    await mongoose.disconnect();
 }
 
-PRG11-------GROUP INFORMATION
+main().catch(console.error);
 
-# a. Display all groups available in the system
-echo "--- All Groups in the System ---"
-cat /etc/group | cut -d: -f1
-# b. Display the group ID of a specified group
-echo ""
-echo "Enter group name to find its ID:"
-read grpname
-grpid=$(getent group $grpname | cut -d: -f3)
-echo "Group ID of '$grpname' is: $grpid"
-# c. List users belonging to a particular group
-echo ""
-echo "Enter group name to list its members:"
-read grpname2
-echo "Users in group '$grpname2':"
-getent group $grpname2 | cut -d: -f4 | tr ',' '\n'
-# d. Count total number of groups
-echo ""
-totalgroups=$(cat /etc/group | wc -l)
-echo "Total number of groups: $totalgroups"
-# e. Display groups assigned to current user
-echo ""
-echo "Groups assigned to current user ($USER):"
-groups $USER
+PRG10-------
 
-PRG12--------MONITOR PROCESS ACTIVITIES
+//INDEX.JS
+const express = require("express");
 
-# a. Display all running processes
-echo "--- All Running Processes ---"
-ps -ef
-# b. Processes belonging to the current user
-echo ""
-echo "--- Processes of Current User ($USER) ---"
-ps -u $USER
-# c. Top 5 CPU consuming processes
-echo ""
-echo "--- Top 5 CPU Consuming Processes ---"
-echo "PID COMMAND %CPU"
-ps -eo pid,comm,%cpu --sort=-%cpu | head -6
-# d. Process ID and Parent Process ID
-echo ""
-echo "--- PID and PPID ---"
-echo "PID PPID COMMAND"
-ps -eo pid,ppid,comm | head -15
-# e. Total number of running processes
-echo ""
-total=$(ps -ef | wc -l)
-echo "Total number of running processes: $total"
+const app = express();
 
-PRG13-------NETWORK CONFIGURATION
+// Middleware to read JSON data
+app.use(express.json());
 
-# a. Display system hostname
-echo "--- System Hostname ---"
-hostname
-# b. IP address of all network interfaces
-echo ""
-echo "--- IP Addresses of Network Interfaces ---"
-ip addr show | grep -E 'inet |^[0-9]+:'
-# c. Routing table information
-echo ""
-echo "--- Routing Table ---"
-ip route
-# d. DNS server configuration
-echo ""
-echo "--- DNS Server Configuration ---"
-cat /etc/resolv.conf
-# e. Test network connectivity
-# a. Display system hostname
-echo "--- System Hostname ---"
-hostname
-# b. IP address of all network interfaces
-echo ""
-echo "--- IP Addresses of Network Interfaces ---"
-ip addr show | grep -E 'inet |^[0-9]+:'
-# c. Routing table information
-echo ""
-echo "--- Routing Table ---"
-ip route
-# d. DNS server configuration
-echo ""
-echo "--- DNS Server Configuration ---"
-cat /etc/resolv.conf
-# e. Test network connectivity
-echo ""
-echo "Enter remote host to test (e.g. 8.8.8.8):"
-read remotehost
-echo "Testing connectivity to $remotehost ..."
-ping -c 4 $remotehost
+// Import route modules
+const studentRoutes = require("./routes/studentRoutes");
+const userRoutes = require("./routes/userRoutes");
 
-PRG14------MONITOR SYSTEM LOGS
+// Use modular routes
+app.use("/students", studentRoutes);
+app.use("/users", userRoutes);
 
-# a. Recent system log entries
-echo "--- Recent System Log Entries ---"
-tail -20 /var/log/messages 2>/dev/null || journalctl -n 20
-# b. Login history of users
-echo ""
-echo "--- Login History of Users ---"
-last | head -15
-# c. Failed login attempts
-echo ""
-echo "--- Failed Login Attempts ---"
-grep "Failed password" /var/log/secure 2>/dev/null | tail -10
-# d. Search for specific keyword in log files
-echo ""
-echo "Enter keyword to search in /var/log/messages:"
-read keyword
-echo "Results for '$keyword':"
-grep -i "$keyword" /var/log/messages 2>/dev/null | tail -10
-# e. Last 10 security related log messages
-echo ""
-echo "--- Last 10 Security Log Messages ---"
-tail -10 /var/log/secure 2>/dev/null || journalctl -u sshd -n 10
+// Home route
+app.get("/", (req, res) => {
+    res.send("Express Modular Routing Application");
+});
 
-PRG15------ANALYZE DISK USAGE
+// Start server
+const PORT = 3000;
 
-# a. Disk usage of all directories in home folder
-echo "--- Disk Usage of Home Directory ---"
-du -sh ~/* 2>/dev/null
-# b. Top 5 largest directories in the system
-echo ""
-echo "--- Top 5 Largest Directories ---"
-du -sh /* 2>/dev/null | sort -rh | head -5
-# c. Number of files in each home subdirectory
-echo ""
-echo "--- File Count in Each Home Subdirectory ---"
-for dir in ~/*/
-do
-count=$(ls "$dir" 2>/dev/null | wc -l)
-echo "$dir : $count files"
-done
-# d. Filesystem type of each partition
-echo ""
-echo "--- Filesystem Type of Each Partition ---"
-df -T | awk '{print $1, $2, $NF}'
-# e. Free disk space available
-echo ""
-echo "--- Free Disk Space Available ---"
-df -h
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
 
+//STUDENTROUTES.JS
+routes/studentRoutes.js
+
+const express = require("express");
+
+const router = express.Router();
+
+// GET all students
+router.get("/", (req, res) => {
+    res.json([
+        { id: 1, name: "Smith", department: "IT" },
+        { id: 2, name: "John", department: "CSE" },
+        { id: 3, name: "David", department: "ECE" }
+    ]);
+});
+
+// GET student by ID
+router.get("/:id", (req, res) => {
+    const id = req.params.id;
+
+    res.send(`Details of student with ID: ${id}`);
+});
+
+// POST a new student
+router.post("/", (req, res) => {
+    const student = req.body;
+
+    res.json({
+        message: "Student added successfully",
+        student: student
+    });
+});
+
+// DELETE student
+router.delete("/:id", (req, res) => {
+    const id = req.params.id;
+
+    res.send(`Student with ID ${id} deleted successfully`);
+});
+
+module.exports = router;
+
+//USERROUTES.JS
+routes/studentRoutes.js
+
+const express = require("express");
+
+const router = express.Router();
+
+// GET all users
+router.get("/", (req, res) => {
+    res.json([
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" }
+    ]);
+});
+
+// GET user by ID
+router.get("/:id", (req, res) => {
+    const id = req.params.id;
+
+    res.send(`Details of user with ID: ${id}`);
+});
+
+// POST a new user
+router.post("/", (req, res) => {
+    const user = req.body;
+
+    res.json({
+        message: "User added successfully",
+        user: user
+    });
+});
+
+// DELETE user
+router.delete("/:id", (req, res) => {
+    const id = req.params.id;
+
+    res.send(`User with ID ${id} deleted successfully`);
+});
+
+module.exports = router;
+
+PRG11--------
+
+const { MongoClient } = require("mongodb");
+
+const url = "mongodb://127.0.0.1:27017";
+
+const client = new MongoClient(url);
+
+async function main() {
+    try {
+        // Connect to MongoDB
+        await client.connect();
+
+        console.log("Connected to MongoDB");
+
+        const db = client.db("college");
+        const students = db.collection("students");
+
+        // Insert sample records
+        await students.deleteMany({});
+
+        await students.insertMany([
+            { name: "Arun", age: 20, marks: 85, city: "Chennai" },
+            { name: "Priya", age: 22, marks: 92, city: "Madurai" },
+            { name: "Kumar", age: 19, marks: 68, city: "Chennai" },
+            { name: "Divya", age: 21, marks: 75, city: "Coimbatore" },
+            { name: "Ravi", age: 23, marks: 88, city: "Madurai" }
+        ]);
+
+        // 1. Marks greater than 80
+        console.log("\nStudents with marks > 80:");
+
+        console.log(
+            await students.find({
+                marks: { $gt: 80 }
+            }).toArray()
+        );
+
+        // 2. Age greater than or equal to 21
+        console.log("\nStudents with age >= 21:");
+
+        console.log(
+            await students.find({
+                age: { $gte: 21 }
+            }).toArray()
+        );
+
+        // 3. Marks between 70 and 90
+        console.log("\nStudents with marks between 70 and 90:");
+
+        console.log(
+            await students.find({
+                marks: { $gte: 70, $lte: 90 }
+            }).toArray()
+        );
+
+        // 4. Students from Chennai or Madurai
+        console.log("\nStudents from Chennai or Madurai:");
+
+        console.log(
+            await students.find({
+                city: { $in: ["Chennai", "Madurai"] }
+            }).toArray()
+        );
+
+        // 5. Age >= 20 AND marks > 80
+        console.log("\nAge >= 20 AND marks > 80:");
+
+        console.log(
+            await students.find({
+                $and: [
+                    { age: { $gte: 20 } },
+                    { marks: { $gt: 80 } }
+                ]
+            }).toArray()
+        );
+
+        // 6. City is Chennai OR marks > 90
+        console.log("\nChennai OR marks > 90:");
+
+        console.log(
+            await students.find({
+                $or: [
+                    { city: "Chennai" },
+                    { marks: { $gt: 90 } }
+                ]
+            }).toArray()
+        );
+
+    } catch (err) {
+        console.log("Error:", err);
+
+    } finally {
+        await client.close();
+    }
+}
+
+main();
+
+PRG12------------
+
+
+const express = require("express");
+
+const app = express();
+
+app.use(express.json());
+
+// Student data
+const students = [
+    { id: 1, name: "Arun", department: "CSE" },
+    { id: 2, name: "Bala", department: "IT" },
+    { id: 3, name: "Chandru", department: "ECE" },
+    { id: 4, name: "Dinesh", department: "CSE" },
+    { id: 5, name: "Ezhil", department: "IT" },
+    { id: 6, name: "Faisal", department: "ECE" },
+    { id: 7, name: "Gopal", department: "CSE" },
+    { id: 8, name: "Hari", department: "IT" },
+    { id: 9, name: "Imran", department: "ECE" },
+    { id: 10, name: "Jagan", department: "CSE" }
+];
+
+// Pagination API
+app.get("/students", (req, res) => {
+
+    // Get page and limit from URL
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit) || 3);
+
+    // Calculate starting index
+    const startIndex = (page - 1) * limit;
+
+    // Calculate ending index
+    const endIndex = page * limit;
+
+    // Get records for current page
+    const result = students.slice(startIndex, endIndex);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(students.length / limit);
+
+    res.json({
+        page: page,
+        limit: limit,
+        totalRecords: students.length,
+        totalPages: totalPages,
+        students: result
+    });
+});
+
+// Start server
+app.listen(3000, () => {
+    console.log("Server running at http://localhost:3000");
+});
+
+PRG13----------
+
+const jwt = require("jsonwebtoken");
+
+const generateToken = () => {
+    const token = jwt.sign(
+        { userId: 1 },
+        "secret_key",
+        { expiresIn: "1h" }
+    );
+
+    console.log(token);
+};
+
+generateToken();
+
+PRG14---------
+
+const bcrypt = require("bcrypt");
+
+const hashPassword = async () => {
+    const hashed = await bcrypt.hash("mypassword", 10);
+
+    console.log("Hashed:", hashed);
+
+    const match = await bcrypt.compare("mypassword", hashed);
+
+    console.log("Match:", match);
+};
+
+hashPassword();
+
+PRG15------------
+
+const express = require("express");
+
+const app = express();
+
+app.use(express.json());
+
+let students = [];
+
+// Add Student
+app.post("/students", (req, res) => {
+    students.push(req.body);
+
+    res.send("Student added successfully");
+});
+
+// View Students
+app.get("/students", (req, res) => {
+    res.json(students);
+});
+
+// Update Student
+app.put("/students/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    if (id < 0 || id >= students.length) {
+        return res.status(404).send("Student not found");
+    }
+
+    students[id] = req.body;
+
+    res.send("Student updated successfully");
+});
+
+// Delete Student
+app.delete("/students/:id", (req, res) => {
+    const id = Number(req.params.id);
+
+    if (id < 0 || id >= students.length) {
+        return res.status(404).send("Student not found");
+    }
+
+    students.splice(id, 1);
+
+    res.send("Student deleted successfully");
+});
+
+// Start server
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
